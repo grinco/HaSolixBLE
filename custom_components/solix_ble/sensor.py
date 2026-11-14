@@ -37,6 +37,7 @@ from .const import (
     LIGHT_STATUS_SB2_STRINGS,
     LIGHT_STATUS_STRINGS,
     MAX_LOAD_SB2_STRINGS,
+    Models,
     OVERLOAD_STATUS_C300DC_STRINGS,
     PORT_STATUS_STRINGS,
     USAGE_MODE_SB2_STRINGS,
@@ -57,6 +58,7 @@ async def async_setup_entry(
     """Set up the Sensors."""
 
     device = config_entry.runtime_data
+    model = Models(config_entry.data["model"])
     sensors: list[SolixSensorEntity] = []
 
     # Charging status sensor
@@ -156,8 +158,14 @@ async def async_setup_entry(
             )
         )
 
-    # Battery health sensor
-    if type(device) in [C300DC, C800, C1000, C1000G2, F2000, F2600]:
+    # Battery health sensor.
+    # Not on the C2000 Gen 2: the byte the C1000 Gen 2 uses for health is not a
+    # health percentage on the A1783 (it reads out of range), and the Anker app
+    # exposes no health metric for it, so the sensor is suppressed entirely.
+    if (
+        type(device) in [C300DC, C800, C1000, C1000G2, F2000, F2600]
+        and model is not Models.C2000G2
+    ):
         sensors.append(
             SolixSensorEntity(
                 device,
