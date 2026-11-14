@@ -21,5 +21,5 @@
     "issue_tracker": "https://github.com/grinco/HaSolixBLE/issues",
     "requirements": ["SolixBLE@git+https://github.com/grinco/SolixBLE@main"],
     "loggers": ["bleak", "SolixBLE"],
-    "version": "3.8.0"
+    "version": "3.8.1"
 }
